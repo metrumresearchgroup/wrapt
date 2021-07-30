@@ -24,7 +24,7 @@ func WrapT(t *testing.T) *T {
 		A: assert.New(t),
 		ResultHandler: func(t *T, success bool, format string, args ...interface{}) bool {
 			if !success {
-				t.Fatalf(format, args)
+				t.Fatalf(format, args...)
 			}
 
 			return success
