@@ -6,12 +6,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // T is simply a wrap of *testing.T.
 type T struct {
 	*testing.T
 	A             *assert.Assertions
+	R             *require.Assertions
 	ResultHandler func(t *T, success bool, format string, args ...interface{}) bool
 }
 
@@ -22,6 +24,7 @@ func WrapT(t *testing.T) *T {
 	return &T{
 		T: t,
 		A: assert.New(t),
+		R: require.New(t),
 		ResultHandler: func(t *T, success bool, format string, args ...interface{}) bool {
 			if !success {
 				t.Fatalf(format, args...)
@@ -36,6 +39,7 @@ func (t *T) wrapT(tt *testing.T) *T {
 	return &T{
 		T:             tt,
 		A:             assert.New(tt),
+		R:             require.New(tt),
 		ResultHandler: t.ResultHandler,
 	}
 }
