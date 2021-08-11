@@ -38,6 +38,6 @@ func Test_AssertError(tt *testing.T) {
 func Test_ValidateError(tt *testing.T) {
 	t := wrapt.WrapT(tt)
 
-	t.ValidateError("err", false, nil)
-	t.ValidateError("err", true, errors.New("error"))
+	t.ValidateError(false, nil, "err")
+	t.ValidateError(true, errors.New("error"), "err")
 }

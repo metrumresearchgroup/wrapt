@@ -12,8 +12,16 @@ import (
 // T is simply a wrap of *testing.T.
 type T struct {
 	*testing.T
-	A             *assert.Assertions
-	R             *require.Assertions
+	// A allows for assertions with a test error. The source of these
+	// assertions is testify.
+	A *assert.Assertions
+
+	// A allows for requirements with a test failure. The source of
+	// these assertions is also testify.
+	R *require.Assertions
+
+	// ResultHandler is a function that can be set to handle any failure
+	// of a test where it is called, mainly in RunFatal.
 	ResultHandler func(t *T, success bool, format string, args ...interface{}) bool
 }
 
@@ -64,23 +72,23 @@ func (t *T) Run(name string, fn func(t *T)) (success bool) {
 
 // ValidateError will check an error vs an expected state and fail the outer
 // test if the validation fails.
-func (t *T) ValidateError(desc string, wantErr bool, err error) (failed bool) {
+func (t *T) ValidateError(wantErr bool, err error, msgAndArgs ...interface{}) (failed bool) {
 	t.Helper()
 
-	t.RunFatal(desc, func(t *T) {
-		failed = t.AssertError(wantErr, err)
+	t.RunFatal("Validating error", func(t *T) {
+		failed = t.AssertError(wantErr, err, msgAndArgs...)
 	})
 
 	return failed
 }
 
-func (t *T) AssertError(wantErr bool, err error) (success bool) {
+func (t *T) AssertError(wantErr bool, err error, msgAndArgs ...interface{}) (success bool) {
 	t.Helper()
 
 	if wantErr {
-		success = t.A.Error(err)
+		success = t.A.Error(err, msgAndArgs...)
 	} else {
-		success = t.A.NoError(err)
+		success = t.A.NoError(err, msgAndArgs...)
 	}
 
 	return success
