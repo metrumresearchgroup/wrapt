@@ -2,19 +2,19 @@
 package require
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/require"
+
+	"github.com/metrumresearchgroup/wrapt/testingt"
 )
 
 // Assertions adds assertions to testify's require lib.
 type Assertions struct {
 	*require.Assertions
-	tt *testing.T
+	tt testingt.TestingT
 }
 
 // New completely creates a new Assertions.
-func New(tt *testing.T) *Assertions {
+func New(tt testingt.TestingT) *Assertions {
 	return &Assertions{
 		tt:         tt,
 		Assertions: require.New(tt),
@@ -26,7 +26,7 @@ func New(tt *testing.T) *Assertions {
 //   actualObj, err := SomeFunction()
 //   success := r.WantError(test.wantErr, err)
 func (r *Assertions) WantError(wantErr bool, err error, msgAndArgs ...interface{}) {
-	if h, ok := require.TestingT(r.tt).(tHelper); ok {
+	if h, ok := r.tt.(testingt.Helper); ok {
 		h.Helper()
 	}
 
@@ -35,9 +35,4 @@ func (r *Assertions) WantError(wantErr bool, err error, msgAndArgs ...interface{
 	} else {
 		r.NoError(err, msgAndArgs...)
 	}
-}
-
-// tHelper is borrowed from a neat trick from testify.
-type tHelper interface {
-	Helper()
 }

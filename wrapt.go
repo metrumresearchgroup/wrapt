@@ -60,8 +60,6 @@ func (t *T) RunFatal(name string, fn func(t *T)) {
 	t.Helper()
 
 	t.FatalHandler(t, t.Run(name, fn))
-
-	return
 }
 
 // Run implements the standard testing.T.Run() by wrapping *testing.T

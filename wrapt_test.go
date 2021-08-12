@@ -30,16 +30,32 @@ func Test_T_ResultHandler(tt *testing.T) {
 	t.A.True(success)
 }
 
+// Test_Assert_WantError is a wiring test, and does not walk any negative
+// paths, because we're passing through a real testing.T.
 func Test_Assert_WantError(tt *testing.T) {
+	type Wanter interface {
+		//
+		WantError(wantErr bool, err error, msgAndArgs ...interface{}) (success bool)
+	}
 	t := wrapt.WrapT(tt)
 
-	t.A.WantError(false, nil)
-	t.A.WantError(true, errors.New("error"))
+	wanter := Wanter(t.A)
+
+	t.A.True(wanter.WantError(false, nil))
+	t.A.True(wanter.WantError(true, errors.New("error")))
 }
 
+// Test_Require_WantError is a wiring test, and does not walk any negative
+// paths, because we're passing through a real testing.T.
 func Test_Require_WantError(tt *testing.T) {
+	type Wanter interface {
+		WantError(wantErr bool, err error, msgAndArgs ...interface{})
+	}
+
 	t := wrapt.WrapT(tt)
 
-	t.R.WantError(false, nil)
-	t.R.WantError(true, errors.New("error"))
+	wanter := Wanter(t.R)
+
+	wanter.WantError(false, nil)
+	wanter.WantError(true, errors.New("error"))
 }
