@@ -7,37 +7,39 @@ import (
 	"github.com/metrumresearchgroup/wrapt"
 )
 
-func Test_WrapT(tt *testing.T) {
+func Test_T_RunFatal(tt *testing.T) {
 	t := wrapt.WrapT(tt)
 	t.RunFatal("positive assertion without failure", func(t *wrapt.T) {
 		t.A.True(true, "not true")
 	})
 }
 
-func Test_ResultHandler(tt *testing.T) {
+func Test_T_ResultHandler(tt *testing.T) {
 	t := wrapt.WrapT(tt)
 
-	t.ResultHandler = func(t *wrapt.T, success bool, format string, args ...interface{}) bool {
-		return success
+	var success bool
+
+	t.FatalHandler = func(t *wrapt.T, suc bool, msgAndArgs ...interface{}) {
+		success = suc
 	}
 
-	retSuccess := t.RunFatal("antifail", func(t *wrapt.T) {
+	t.RunFatal("antifail", func(t *wrapt.T) {
 		// do nothing
 	})
 
-	t.A.True(retSuccess)
+	t.A.True(success)
 }
 
-func Test_AssertError(tt *testing.T) {
+func Test_Assert_WantError(tt *testing.T) {
 	t := wrapt.WrapT(tt)
 
-	t.AssertError(false, nil)
-	t.AssertError(true, errors.New("error"))
+	t.A.WantError(false, nil)
+	t.A.WantError(true, errors.New("error"))
 }
 
-func Test_ValidateError(tt *testing.T) {
+func Test_Require_WantError(tt *testing.T) {
 	t := wrapt.WrapT(tt)
 
-	t.ValidateError(false, nil, "err")
-	t.ValidateError(true, errors.New("error"), "err")
+	t.R.WantError(false, nil)
+	t.R.WantError(true, errors.New("error"))
 }
