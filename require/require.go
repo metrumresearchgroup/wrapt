@@ -3,18 +3,21 @@ package require
 
 import (
 	"github.com/stretchr/testify/require"
-
-	"github.com/metrumresearchgroup/wrapt/testingt"
 )
+
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 github.com/stretchr/testify/require.TestingT
 
 // Assertions adds assertions to testify's require lib.
 type Assertions struct {
 	*require.Assertions
-	tt testingt.TestingT
+
+	// We're using the require package's version so it keeps the
+	// contract with our 3rd party.
+	tt require.TestingT
 }
 
 // New completely creates a new Assertions.
-func New(tt testingt.TestingT) *Assertions {
+func New(tt require.TestingT) *Assertions {
 	return &Assertions{
 		tt:         tt,
 		Assertions: require.New(tt),
@@ -25,14 +28,20 @@ func New(tt testingt.TestingT) *Assertions {
 //
 //   actualObj, err := SomeFunction()
 //   success := r.WantError(test.wantErr, err)
-func (r *Assertions) WantError(wantErr bool, err error, msgAndArgs ...interface{}) {
-	if h, ok := r.tt.(testingt.Helper); ok {
+func (a *Assertions) WantError(wantErr bool, err error, msgAndArgs ...interface{}) {
+	if h, ok := a.tt.(helper); ok {
 		h.Helper()
 	}
 
 	if wantErr {
-		r.Error(err, msgAndArgs...)
+		a.Error(err, msgAndArgs...)
 	} else {
-		r.NoError(err, msgAndArgs...)
+		a.NoError(err, msgAndArgs...)
 	}
+}
+
+// helper is borrowed from testify; it's copied here because
+// it's called tHelper there, and is not exported.
+type helper interface {
+	Helper()
 }

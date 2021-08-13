@@ -28,11 +28,11 @@ With this library, we can declare all of that as a one-liner. Since errors are c
 ```go
 // same config as above
 
-// This is a one-off assertion that causes an Failure in the current test:
-t.AssertError(test.wantErr, err)
+// This assertion calls assert.WantError, logs and error.
+t.A.WantError(test.wantErr, err)
 
-// This is a positive validation that always logs as a sub-test. It creates a t.Run function and fails the outer test:
-t.ValidateError("err in write", test.wantErr, err)
+// This assertion calls require.WantError, which additionally stops the test.
+t.R.ValidateError("err in write", test.wantErr, err)
 ```
 
 ### Running Sub-tests With Propagating Fatal
@@ -55,30 +55,28 @@ After:
 t := wrapt.WrapT(tt)
 t.RunFatal("sub-test", func(t *wrapt.T){
 	// anything unsuccessful works here
-	t.Errorf("inner *and* outer test fails!")
+	t.Errorf("inner *and* outer test fails immediately!")
 })
 // Test stops on the above line if it fails instead
 // of continuing on…
 ```
 
-Note that Run is in the same form as `testing.T.Run()` but it accepts a local `*wrapt.T` type.
+Note that Run is in the same form as `*testing.T.Run()` but it accepts a local `*wrapt.T` type.
 
 ## Amenities
 
-AssertError: Compares the wantError value with the actual error state and sets a `t.Error`.
+WrapT: creates a wrapped `*testing.T` value that provides additional functionality.
 
 Run: mirrors the regular `*t.Run` function `testing`, but accepting a `*wrapt.T` instead for the function definition.
 Returns a bool success value like the original.
 
 RunFatal: runs like Run, accepting `*wrapt.T` but promotes an inner failure as an failure in the current test.
 
-ValidateError: Like AssertError, but calls `Fatalf` on the outer test.
-
-WrapT: creates a wrapped `*testing.T` value that provides additional functionality.
+WantErr: compares wheter we want an error (bool) to the error value (error or nil)
 
 ## A & R
 
-`T.A` and `T.R` contains all the functionality of the [testif](https://github.com/stretchr/testify) `assert` and `require` structs, respectively.
+`T.A` and `T.R` contains all the functionality of the [testify](https://github.com/stretchr/testify) `assert` and `require` structs, respectively.
 
 Full documentation for [assert is here](https://pkg.go.dev/github.com/stretchr/testify/assert).
 

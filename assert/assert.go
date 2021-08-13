@@ -5,13 +5,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 github.com/stretchr/testify/assert.TestingT
+
 // Assertions adds assertions to testify's assert lib.
 type Assertions struct {
 	*assert.Assertions
 	tt assert.TestingT
 }
 
-// New properly creates an Assertions.
+// New properly creates an Assertions struct.
 func New(tt assert.TestingT) *Assertions {
 	return &Assertions{
 		tt:         tt,
@@ -24,7 +26,7 @@ func New(tt assert.TestingT) *Assertions {
 //   actualObj, err := SomeFunction()
 //   success := a.WantError(test.wantErr, err)
 func (a *Assertions) WantError(wantErr bool, err error, msgAndArgs ...interface{}) (success bool) {
-	if h, ok := a.tt.(tHelper); ok {
+	if h, ok := a.tt.(helper); ok {
 		h.Helper()
 	}
 
@@ -35,7 +37,7 @@ func (a *Assertions) WantError(wantErr bool, err error, msgAndArgs ...interface{
 	}
 }
 
-// tHelper is borrowed from a neat trick from testify.
-type tHelper interface {
+// helper is borrowed from a neat trick from testify.
+type helper interface {
 	Helper()
 }
