@@ -1,24 +1,28 @@
-// Package require is a wrapper over testify's require package.
+// Package require is a wrapper over testify's require package. We can
+// expand it with additional functionality with a minimum of code, so
+// long as we don't collide with their definitions.
 package require
 
-import (
-	"github.com/stretchr/testify/require"
-)
+import "github.com/stretchr/testify/require"
 
 // Assertions adds assertions to testify's require lib.
 type Assertions struct {
+	// Embedding this to pass through to all functionality we don't add.
 	*require.Assertions
 
-	// We're using the require package's version so it keeps the
+	// We're using the require package's interface so it keeps the
 	// contract with our 3rd party.
 	tt require.TestingT
 }
 
-// New completely creates a new Assertions.
+// New creates a new Assertions type wrapping testify with additional
+// functions.
 func New(tt require.TestingT) *Assertions {
 	return &Assertions{
-		tt:         tt,
+		// embedded fields carry the name of the underlying type.
 		Assertions: require.New(tt),
+		// we need tt to call helper.
+		tt: tt,
 	}
 }
 
