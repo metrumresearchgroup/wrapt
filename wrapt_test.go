@@ -7,55 +7,37 @@ import (
 	"github.com/metrumresearchgroup/wrapt"
 )
 
-func Test_T_RunFatal(tt *testing.T) {
+func Test_WrapT(tt *testing.T) {
 	t := wrapt.WrapT(tt)
 	t.RunFatal("positive assertion without failure", func(t *wrapt.T) {
 		t.A.True(true, "not true")
 	})
 }
 
-func Test_T_ResultHandler(tt *testing.T) {
+func Test_ResultHandler(tt *testing.T) {
 	t := wrapt.WrapT(tt)
 
-	var success bool
-
-	t.FatalHandler = func(t *wrapt.T, suc bool, msgAndArgs ...interface{}) {
-		success = suc
+	t.ResultHandler = func(t *wrapt.T, success bool, format string, args ...interface{}) bool {
+		return success
 	}
 
-	t.RunFatal("antifail", func(t *wrapt.T) {
+	retSuccess := t.RunFatal("antifail", func(t *wrapt.T) {
 		// do nothing
 	})
 
-	t.A.True(success)
+	t.A.True(retSuccess)
 }
 
-// Test_Assert_WantError is a wiring test, and does not walk any negative
-// paths, because we're passing through a real testing.T.
-func Test_Assert_WantError(tt *testing.T) {
-	type Wanter interface {
-		//
-		WantError(wantErr bool, err error, msgAndArgs ...interface{}) (success bool)
-	}
+func Test_AssertError(tt *testing.T) {
 	t := wrapt.WrapT(tt)
 
-	wanter := Wanter(t.A)
-
-	t.A.True(wanter.WantError(false, nil))
-	t.A.True(wanter.WantError(true, errors.New("error")))
+	t.AssertError(false, nil)
+	t.AssertError(true, errors.New("error"))
 }
 
-// Test_Require_WantError is a wiring test, and does not walk any negative
-// paths, because we're passing through a real testing.T.
-func Test_Require_WantError(tt *testing.T) {
-	type Wanter interface {
-		WantError(wantErr bool, err error, msgAndArgs ...interface{})
-	}
-
+func Test_ValidateError(tt *testing.T) {
 	t := wrapt.WrapT(tt)
 
-	wanter := Wanter(t.R)
-
-	wanter.WantError(false, nil)
-	wanter.WantError(true, errors.New("error"))
+	t.ValidateError("err", false, nil)
+	t.ValidateError("err", true, errors.New("error"))
 }
