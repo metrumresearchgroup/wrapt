@@ -10,6 +10,8 @@ import (
 	"github.com/metrumresearchgroup/wrapt/assert/assertfakes"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 github.com/stretchr/testify/assert.TestingT
+
 func TestAssertions_WantError(t *testing.T) {
 	type args struct {
 		wantErr    bool

@@ -5,8 +5,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 github.com/stretchr/testify/assert.TestingT
-
 // Assertions adds assertions to testify's assert lib.
 type Assertions struct {
 	*assert.Assertions
