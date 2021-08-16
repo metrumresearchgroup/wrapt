@@ -32,7 +32,7 @@ With this library, we can declare all of that as a one-liner. Since errors are c
 t.A.WantError(test.wantErr, err)
 
 // This assertion calls require.WantError, which additionally stops the test.
-t.R.ValidateError("err in write", test.wantErr, err)
+t.R.WantError(test.wantErr, err)
 ```
 
 ### Running Sub-tests With Propagating Fatal
