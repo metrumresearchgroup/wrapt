@@ -37,8 +37,10 @@ func WrapT(tt *testing.T) *T {
 		A: assert.New(tt),
 		R: require.New(tt),
 		FatalHandler: func(t *T, success bool, msgAndArgs ...interface{}) {
+			t.Helper()
+
 			if !success {
-				t.R.FailNow("fatal inner test failure", msgAndArgs...)
+				t.FailNow()
 			}
 		},
 	}

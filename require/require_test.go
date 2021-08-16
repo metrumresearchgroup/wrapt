@@ -10,6 +10,8 @@ import (
 	"github.com/metrumresearchgroup/wrapt/require/requirefakes"
 )
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 github.com/stretchr/testify/require.TestingT
+
 func TestAssertions_WantError(t *testing.T) {
 	type args struct {
 		wantErr    bool
@@ -32,7 +34,7 @@ func TestAssertions_WantError(t *testing.T) {
 			args: args{
 				wantErr:    true,
 				err:        errors.New("error"),
-				msgAndArgs: []interface{}{"message %s", "hi"},
+				msgAndArgs: []interface{}{"message", "hi"},
 			},
 			prepResponse: func(testingT *requirefakes.FakeTestingT) { /*noop*/ },
 			testMock: func(r *vendorrequire.Assertions, exp *expected, fakeTestingT *requirefakes.FakeTestingT) {
@@ -45,7 +47,7 @@ func TestAssertions_WantError(t *testing.T) {
 			args: args{
 				wantErr:    false,
 				err:        nil,
-				msgAndArgs: []interface{}{"message %s", "hi"},
+				msgAndArgs: []interface{}{"message", "hi"},
 			},
 			prepResponse: func(testingT *requirefakes.FakeTestingT) { /*noop*/ },
 			testMock: func(r *vendorrequire.Assertions, exp *expected, fakeTestingT *requirefakes.FakeTestingT) {
@@ -58,7 +60,7 @@ func TestAssertions_WantError(t *testing.T) {
 			args: args{
 				wantErr:    true,
 				err:        nil,
-				msgAndArgs: []interface{}{"message %s", "hi"},
+				msgAndArgs: []interface{}{"message", "hi"},
 			},
 			prepResponse: func(fakeTestingT *requirefakes.FakeTestingT) {
 
@@ -73,7 +75,7 @@ func TestAssertions_WantError(t *testing.T) {
 			},
 			expected: &expected{
 				format: "\n%s",
-				args:   []interface{}{"\tError Trace:\t\n\tError:      \tAn error is expected but got nil.\n\tMessages:   \t[message %s hi]\n"},
+				args:   []interface{}{"\tError Trace:\t\n\tError:      \tAn error is expected but got nil.\n\tMessages:   \t[message hi]\n"},
 			},
 		},
 		{
@@ -81,7 +83,7 @@ func TestAssertions_WantError(t *testing.T) {
 			args: args{
 				wantErr:    false,
 				err:        errors.New("new"),
-				msgAndArgs: []interface{}{"message %s", "hi"},
+				msgAndArgs: []interface{}{"message", "hi"},
 			},
 			prepResponse: func(fakeTestingT *requirefakes.FakeTestingT) {
 
@@ -96,7 +98,7 @@ func TestAssertions_WantError(t *testing.T) {
 			},
 			expected: &expected{
 				format: "\n%s",
-				args:   []interface{}{"\tError Trace:\t\n\tError:      \tReceived unexpected error:\n\t            \tnew\n\tMessages:   \t[message %s hi]\n"},
+				args:   []interface{}{"\tError Trace:\t\n\tError:      \tReceived unexpected error:\n\t            \tnew\n\tMessages:   \t[message hi]\n"},
 			},
 		},
 	}
