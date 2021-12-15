@@ -4,10 +4,10 @@ import (
 	"errors"
 	"testing"
 
-	// vendorrequire is the test library bound to our actual *testing.T.
+	// vendorassert is the test library bound to our actual *testing.T.
 	// Renaming the import distinguishes it from our own library
 	// of the same name.
-	vendorrequire "github.com/stretchr/testify/require"
+	vendorassert "github.com/stretchr/testify/assert"
 
 	"github.com/metrumresearchgroup/wrapt/assert"
 	"github.com/metrumresearchgroup/wrapt/assert/assertfakes"
@@ -35,7 +35,7 @@ func TestAssertions_WantError(t *testing.T) {
 		// the testmock function allows us to perform varying checks
 		// on the result that aren't hard-coded in the test body,
 		// expanding flexibility to tests.
-		testMock func(r *vendorrequire.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT)
+		testMock func(r *vendorassert.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT)
 		expected *expected
 	}{
 		{
@@ -45,7 +45,7 @@ func TestAssertions_WantError(t *testing.T) {
 				err:        errors.New("error"),
 				msgAndArgs: []interface{}{"message", "hi"},
 			},
-			testMock: func(r *vendorrequire.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT) {
+			testMock: func(r *vendorassert.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT) {
 				r.Equal(0, fakeTestingT.ErrorfCallCount())
 			},
 		},
@@ -56,7 +56,7 @@ func TestAssertions_WantError(t *testing.T) {
 				err:        nil,
 				msgAndArgs: []interface{}{"message", "hi"},
 			},
-			testMock: func(r *vendorrequire.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT) {
+			testMock: func(r *vendorassert.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT) {
 				r.Equal(0, fakeTestingT.ErrorfCallCount())
 			},
 		},
@@ -67,7 +67,7 @@ func TestAssertions_WantError(t *testing.T) {
 				err:        nil,
 				msgAndArgs: []interface{}{"message", "hi"},
 			},
-			testMock: func(r *vendorrequire.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT) {
+			testMock: func(r *vendorassert.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT) {
 				r.Equal(1, fakeTestingT.ErrorfCallCount())
 				format, args := fakeTestingT.ErrorfArgsForCall(0)
 				r.Equal(exp.format, format)
@@ -85,7 +85,7 @@ func TestAssertions_WantError(t *testing.T) {
 				err:        errors.New("new"),
 				msgAndArgs: []interface{}{"message", "hi"},
 			},
-			testMock: func(r *vendorrequire.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT) {
+			testMock: func(r *vendorassert.Assertions, exp *expected, fakeTestingT *assertfakes.FakeTestingT) {
 				r.Equal(1, fakeTestingT.ErrorfCallCount())
 				format, args := fakeTestingT.ErrorfArgsForCall(0)
 				r.Equal(exp.format, format)
@@ -99,7 +99,7 @@ func TestAssertions_WantError(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r := vendorrequire.New(t)
+			r := vendorassert.New(t)
 			// prevent a panic by ensuring the function is set before
 			// using it.
 			r.NotNil(test.testMock)
