@@ -27,9 +27,6 @@ func New(tt assert.TestingT) *Assertions {
 }
 
 // WantError asserts that a function returned an error (i.e. not `nil`).
-//
-//   actualObj, err := SomeFunction()
-//   success := a.WantError(test.wantErr, err)
 func (a *Assertions) WantError(wantErr bool, err error, msgAndArgs ...interface{}) (success bool) {
 	if h, ok := a.tt.(helper); ok {
 		h.Helper()
