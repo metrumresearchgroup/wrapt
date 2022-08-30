@@ -38,27 +38,22 @@ run:
 
 linters:
   enable:
-    - deadcode
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - structcheck
-    - typecheck
-    - unused
-    - varcheck
-    - gosec
-    - unparam
-    - unconvert
     - dupl
+    - errcheck
     - errorlint
     - exhaustive
     - gochecknoinits
-    - goimports
-    - nlreturn
-    - whitespace
-    - rowserrcheck
     - godot
-    - ifshort
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
     - nakedret
+    - nlreturn
+    - staticcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
