@@ -3,6 +3,8 @@
 package wrapt
 
 import (
+	"io"
+	"net/http"
 	"testing"
 
 	"github.com/metrumresearchgroup/wrapt/assert"
@@ -78,4 +80,11 @@ func (t *T) wrapFn(fn func(*T)) func(*testing.T) {
 	return func(tt *testing.T) {
 		fn(t.innerWrapT(tt))
 	}
+}
+
+func (t *T) LogResponseBody(response *http.Response) {
+	defer func() { _ = response.Body.Close() }()
+	body, err := io.ReadAll(response.Body)
+	t.R.NoError(err)
+	t.Log(string(body))
 }
